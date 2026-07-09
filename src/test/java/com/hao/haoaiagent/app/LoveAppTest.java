@@ -28,5 +28,7 @@ class LoveAppTest {
         message = "我的好朋友A是谁？帮我回忆一下";
         answer = loveApp.doChat(message,chatId);
         Assertions.assertNotNull(answer);
+
+        //ceshi
     }
 }
