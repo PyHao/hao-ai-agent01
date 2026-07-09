@@ -1,5 +1,6 @@
 ### CUSTOM ###
 application-local.yml
+src/main/java/com/hao/haoaiagent/demo/invoke/TestApiKey.java
 
 HELP.md
 target/
