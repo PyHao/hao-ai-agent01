@@ -3,6 +3,9 @@ package com.hao.haoaiagent.app;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
@@ -39,7 +42,8 @@ public class LoveApp {
         chatClient = ChatClient.builder(dashscopeChatModel)
                 .defaultSystem(SYSTEM_PROMPT)
                 .defaultAdvisors(
-                        MessageChatMemoryAdvisor.builder(memory).build()
+                        MessageChatMemoryAdvisor.builder(memory).build(),
+                        new SimpleLoggerAdvisor()
                 )
                 .build();
     }
@@ -53,6 +57,23 @@ public class LoveApp {
         String content = response.getResult().getOutput().getText();
         log.info("context: {}",content);
         return content;
+
+    }
+
+    public String doChat2 (String message,String chatId) {
+        ChatResponse response = chatClient.prompt()
+                .user(message)
+                .advisors(a->a.advisors(
+                        new SimpleLoggerAdvisor()
+                ))
+                .advisors(s -> s.param(ChatMemory.CONVERSATION_ID, chatId))
+                .call()
+                .chatResponse();
+        String content = response.getResult().getOutput().getText();
+        log.info("context: {}",content);
+        return content;
+
+        QuestionAnswerAdvisor
 
     }
 
