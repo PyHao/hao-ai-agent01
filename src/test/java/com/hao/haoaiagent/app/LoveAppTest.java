@@ -31,4 +31,27 @@ class LoveAppTest {
 
         //ceshi
     }
+
+    @Test
+    void testChat2() {
+        String chatId = UUID.randomUUID().toString();
+        //第1轮
+        String message = "我的好朋友A是赵云";
+        LoveApp.LoveReport report = loveApp.doChatWithReport(message, chatId);
+        Assertions.assertNotNull(report);
+        Assertions.assertNotNull(report.title());
+        Assertions.assertNotNull(report.suggestions());
+        //第2轮
+        message = "我的好朋友B是张飞";
+        report = loveApp.doChatWithReport(message, chatId);
+        Assertions.assertNotNull(report);
+        Assertions.assertNotNull(report.title());
+        Assertions.assertNotNull(report.suggestions());
+        //第3轮
+        message = "我的好朋友A是谁？帮我回忆一下";
+        report = loveApp.doChatWithReport(message, chatId);
+        Assertions.assertNotNull(report);
+        Assertions.assertNotNull(report.title());
+        Assertions.assertNotNull(report.suggestions());
+    }
 }

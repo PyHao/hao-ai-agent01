@@ -1,5 +1,8 @@
 package com.hao.haoaiagent.app;
 
+import com.hao.haoaiagent.advisor.MyLoggerAdvisor;
+import com.hao.haoaiagent.rag.LoveAppVectorStoreConfig;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -12,6 +15,8 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @description :
@@ -43,7 +48,9 @@ public class LoveApp {
                 .defaultSystem(SYSTEM_PROMPT)
                 .defaultAdvisors(
                         MessageChatMemoryAdvisor.builder(memory).build(),
-                        new SimpleLoggerAdvisor()
+                        //自定义advisor
+                        new MyLoggerAdvisor()
+//                        new SimpleLoggerAdvisor()
                 )
                 .build();
     }
@@ -73,9 +80,56 @@ public class LoveApp {
         log.info("context: {}",content);
         return content;
 
-        QuestionAnswerAdvisor
+    }
+
+    record LoveReport(String title, List<String> suggestions){
 
     }
+
+    public LoveReport doChatWithReport(String message,String chatId) {
+        MessageWindowChatMemory memory = MessageWindowChatMemory.builder()
+                .chatMemoryRepository(new InMemoryChatMemoryRepository())
+                .maxMessages(10)
+                .build();
+        System.out.println(memory);
+        log.info("====memory==== {}",memory);
+        LoveReport loveReport = chatClient.prompt()
+                .system(SYSTEM_PROMPT + "每次对话后都要生成结果，标题为{用户名} 的 对话报告，内容为建议列表")
+                .user(message)
+                .advisors(a -> a.advisors(MessageChatMemoryAdvisor.builder(memory).build(),
+                        new MyLoggerAdvisor()    //自定义advisor
+                ))
+                .advisors(s -> s.param(ChatMemory.CONVERSATION_ID, chatId))
+                .call()
+                .entity(LoveReport.class);
+        log.info("LoveReport: {}",loveReport);
+        return loveReport;
+
+    }
+
+    @Resource
+    private LoveAppVectorStoreConfig loveAppVectorStoreConfig;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
