@@ -54,4 +54,12 @@ class LoveAppTest {
         Assertions.assertNotNull(report.title());
         Assertions.assertNotNull(report.suggestions());
     }
+
+    @Test
+    void doChatWithRag() {
+        String chatId = UUID.randomUUID().toString();
+        String message = "读完《好好学习：个人知识管理精进指南》花了多长时间？书中提到哪些其他书籍";
+        String answer = loveApp.doChatWithRag(message, chatId);
+        Assertions.assertNotNull(answer);
+    }
 }

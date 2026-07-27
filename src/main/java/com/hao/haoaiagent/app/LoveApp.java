@@ -14,6 +14,7 @@ import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -104,11 +105,30 @@ public class LoveApp {
                 .entity(LoveReport.class);
         log.info("LoveReport: {}",loveReport);
         return loveReport;
-
     }
 
     @Resource
-    private LoveAppVectorStoreConfig loveAppVectorStoreConfig;
+    private VectorStore loveAppVectorStore;
+
+    MessageWindowChatMemory memory = MessageWindowChatMemory.builder()
+            .chatMemoryRepository(new InMemoryChatMemoryRepository())
+            .maxMessages(10)
+            .build();
+
+    public String doChatWithRag(String message,String chatId) {
+        ChatResponse chatResponse = chatClient.prompt()
+                .user(message)
+                .advisors(a -> a.advisors(MessageChatMemoryAdvisor.builder(memory).build(),
+                        new MyLoggerAdvisor()
+                ))
+                .advisors(QuestionAnswerAdvisor.builder(loveAppVectorStore).build())
+                .advisors(s->s.param(ChatMemory.CONVERSATION_ID, chatId))
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("context: {}",content);
+        return content;
+    }
 
 
 
