@@ -8,6 +8,17 @@ spring:
       base-url: http://localhost:11434
       chat:
         model: qwen2.5:7b
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 1536
+        max-document-batch-size: 10000 # 可选：每个批次的最大文档数
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+
 
 server:
   port: 8123
