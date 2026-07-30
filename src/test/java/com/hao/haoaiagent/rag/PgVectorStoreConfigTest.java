@@ -33,4 +33,8 @@ class PgVectorStoreConfigTest {
         List<Document> results = this.pgVectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(3).build());
         Assertions.assertNotNull(results);
     }
+
+    @Test
+    void pgVectorDocumentStore() {
+    }
 }
