@@ -27,7 +27,7 @@ public class LoveAppVectorStoreConfig {
     @Resource
     private MyKeywordEnricher myKeywordEnricher;
 
-//    @Bean
+    @Bean
     VectorStore loveAppVectorStore(EmbeddingModel dashscopeEmbeddingModel) {
         SimpleVectorStore simpleVectorStore = SimpleVectorStore.builder(dashscopeEmbeddingModel).build();
         //加载文档

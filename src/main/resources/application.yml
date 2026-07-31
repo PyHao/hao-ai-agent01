@@ -3,6 +3,7 @@ spring:
     name: hao-ai-agent
   profiles:
     active: local
+#    active: local,pgvector
   ai:
     ollama:
       base-url: http://localhost:11434

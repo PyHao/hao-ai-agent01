@@ -2,6 +2,7 @@ package com.hao.haoaiagent.app;
 
 import com.hao.haoaiagent.advisor.MyLoggerAdvisor;
 import com.hao.haoaiagent.rag.LoveAppVectorStoreConfig;
+import com.hao.haoaiagent.rag.QueryRewriter;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -110,8 +111,11 @@ public class LoveApp {
     @Resource
     private VectorStore loveAppVectorStore;
 
+//    @Resource
+//    private VectorStore pgVectorDocumentStore;
+
     @Resource
-    private VectorStore pgVectorDocumentStore;
+    private QueryRewriter queryRewriter;
 
     MessageWindowChatMemory memory = MessageWindowChatMemory.builder()
             .chatMemoryRepository(new InMemoryChatMemoryRepository())
@@ -119,13 +123,17 @@ public class LoveApp {
             .build();
 
     public String doChatWithRag(String message,String chatId) {
+
+        //查询重写
+        String rewriterMsg = queryRewriter.doQueryRewriter(message);
+
         ChatResponse chatResponse = chatClient.prompt()
-                .user(message)
+                .user(rewriterMsg)
                 .advisors(a -> a.advisors(MessageChatMemoryAdvisor.builder(memory).build(),
                         new MyLoggerAdvisor()
                 ))
-//                .advisors(QuestionAnswerAdvisor.builder(loveAppVectorStore).build())   //使用基於內存的向量数据库
-                .advisors(QuestionAnswerAdvisor.builder(pgVectorDocumentStore).build())  //基於pgvector 向量数据库
+                .advisors(QuestionAnswerAdvisor.builder(loveAppVectorStore).build())   //使用基於內存的向量数据库
+//                .advisors(QuestionAnswerAdvisor.builder(pgVectorDocumentStore).build())  //基於pgvector 向量数据库
                 .advisors(s->s.param(ChatMemory.CONVERSATION_ID, chatId))
                 .call()
                 .chatResponse();
