@@ -111,8 +111,8 @@ public class LoveApp {
     @Resource
     private VectorStore loveAppVectorStore;
 
-//    @Resource
-//    private VectorStore pgVectorDocumentStore;
+    @Resource
+    private VectorStore pgVectorDocumentStore;
 
     @Resource
     private QueryRewriter queryRewriter;
@@ -132,8 +132,8 @@ public class LoveApp {
                 .advisors(a -> a.advisors(MessageChatMemoryAdvisor.builder(memory).build(),
                         new MyLoggerAdvisor()
                 ))
-                .advisors(QuestionAnswerAdvisor.builder(loveAppVectorStore).build())   //使用基於內存的向量数据库
-//                .advisors(QuestionAnswerAdvisor.builder(pgVectorDocumentStore).build())  //基於pgvector 向量数据库
+//                .advisors(QuestionAnswerAdvisor.builder(loveAppVectorStore).build())   //使用基於內存的向量数据库
+                .advisors(QuestionAnswerAdvisor.builder(pgVectorDocumentStore).build())  //基於pgvector 向量数据库
                 .advisors(s->s.param(ChatMemory.CONVERSATION_ID, chatId))
                 .call()
                 .chatResponse();

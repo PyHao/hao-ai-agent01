@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(properties = "app.pgvector.load-documents=false")
 class PgVectorStoreConfigTest {
 
     @Resource

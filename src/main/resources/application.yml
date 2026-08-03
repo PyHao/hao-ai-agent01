@@ -2,8 +2,8 @@ spring:
   application:
     name: hao-ai-agent
   profiles:
-    active: local
-#    active: local,pgvector
+#    active: local
+    active: local,pgvector
   ai:
     ollama:
       base-url: http://localhost:11434
@@ -13,12 +13,17 @@ spring:
       pgvector:
         index-type: HNSW
         distance-type: COSINE_DISTANCE
-        dimensions: 1536
+        dimensions: 1024
         max-document-batch-size: 10000 # 可选：每个批次的最大文档数
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+#    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/ragdb
     username: postgres
     password: postgres
+
+app:
+  pgvector:
+    load-documents: true
 
 
 server:
